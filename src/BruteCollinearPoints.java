@@ -2,7 +2,10 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 public class BruteCollinearPoints {
 
@@ -41,7 +44,7 @@ public class BruteCollinearPoints {
 
     }
 
-        // finds all line segments containing 4 points
+    // finds all line segments containing 4 points
     public BruteCollinearPoints(Point[] points)  {
 
 
@@ -62,7 +65,7 @@ public class BruteCollinearPoints {
                         Double slope_ik = p_i.slopeTo(p_k);
                         Double slope_il = p_i.slopeTo(p_l);
 
-                        if ((slope_ij.compareTo(slope_ik) == 0) && (slope_ij.compareTo(slope_il) == 0)) {
+                        if (isCollinear(slope_ij, slope_ik, slope_il)) {
                             List<Point> linePoints = new ArrayList<Point>();
                             linePoints.add(p_i);
                             linePoints.add(p_j);
@@ -75,13 +78,16 @@ public class BruteCollinearPoints {
                             minMax.add(min);
                             minMax.add(max);
 
+                            LineSegment lineSegment = new LineSegment(min, max);
+
                             if (!slopeToPoint.containsKey(slope_ij)) {
                                 slopeToPoint.put(slope_ij, minMax);
+                                segments.add(lineSegment);
                             }else{
                                 List<Point> existingPoint = slopeToPoint.get(slope_ij);
-                                if ((min.compareTo(existingPoint.get(0)) == -1) ||
-                                        (max.compareTo(existingPoint.get(1)) == 1)) {
-                                        slopeToPoint.put(slope_ij, minMax);
+                                if ((min.compareTo(existingPoint.get(0)) != 0)) {
+                                    slopeToPoint.put(slope_ij, minMax);
+                                    segments.add(lineSegment);
                                 }
                             }
                         }
@@ -89,6 +95,10 @@ public class BruteCollinearPoints {
                 }
             }
         }
+    }
+
+    private boolean isCollinear(Double slope_ij, Double slope_ik, Double slope_il) {
+        return (slope_ij.compareTo(slope_ik) == 0) && (slope_ij.compareTo(slope_il) == 0);
     }
 
     // the number of line segments
@@ -99,12 +109,12 @@ public class BruteCollinearPoints {
     // the line segments
     public LineSegment[] segments(){
 
-        for (Double aDouble : slopeToPoint.keySet()) {
+    /*    for (Double aDouble : slopeToPoint.keySet()) {
             List<Point> tmp = slopeToPoint.get(aDouble);
             LineSegment lineSegment = new LineSegment(tmp.get(0), tmp.get(1));
             segments.add(lineSegment);
 
-        }
+        }*/
 
         return segments.toArray(new LineSegment[segments.size()]);
     }
