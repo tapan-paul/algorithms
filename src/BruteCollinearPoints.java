@@ -33,7 +33,7 @@ public class BruteCollinearPoints {
         for (Point p : points) {
             p.draw();
         }
-        StdDraw.show();
+        edu.princeton.cs.algs4.StdDraw.show();
 
         // print and draw the line segments
         BruteCollinearPoints collinear = new BruteCollinearPoints(points);
