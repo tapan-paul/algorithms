@@ -49,7 +49,6 @@ public class Solver {
         SearchNode root = new SearchNode(noMoves, null, initial);
         queue.insert(root);
         camefrom = new Stack<Board>();
-        camefrom.push(initial);
 
         while (!queue.isEmpty()) {
 
