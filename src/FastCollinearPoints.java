@@ -4,17 +4,16 @@ import edu.princeton.cs.algs4.StdOut;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * @tapan .
+ * Created by l071882 on 18/03/2016.
  */
 public class FastCollinearPoints {
 
 
-    private List<LineSegment> segments = new ArrayList<LineSegment>();
-    private HashMap<Double, Point> slopeToPoint = new HashMap<Double, Point>();
+    private List<LineSegment> lineSegments = new ArrayList<LineSegment>();
 
 
     public static void main(String[] args) {
@@ -44,57 +43,78 @@ public class FastCollinearPoints {
             StdOut.println(segment);
             segment.draw();
         }
-
     }
 
     // finds all line segments containing 4 or more points
-    public FastCollinearPoints(Point[] points) {
+    public FastCollinearPoints(Point[] points){
 
-        if (points == null) {
+        if (points == null){
             throw new NullPointerException();
         }
 
+
         for (int i = 0; i < points.length; i++) {
             Point p = points[i];
-            Point currPoints[] = new Point[points.length-1];
+            Point sortedPoints[] = new Point[points.length-1];
             int k=0;
             for (int j = 0; j < points.length; j++) {
                 Point q = points[j];
-                if (p.compareTo(q) != 0) {
-                    currPoints[k++] = q;
+                if (p.compareTo(q) != 0){
+                    sortedPoints[k++]=q;
                 }
             }
-            Arrays.sort(currPoints, p.SLOPE_ORDER);
-            Double slope_i0 = p.slopeTo(currPoints[0]);
-            Double slope_i1 = p.slopeTo(currPoints[1]);
-            Double slope_i2 = p.slopeTo(currPoints[2]);
+            if (sortedPoints.length == 0) {
+                return;
+            }
 
-            if (slope_i0.compareTo(slope_i1) == 00 && slope_i0.compareTo(slope_i2) == 0) {
-                Arrays.sort(currPoints, 0, 3);
-                if (slopeToPoint.containsKey(slope_i0)){
-                    if (currPoints[0].compareTo(slopeToPoint.get(slope_i0)) != 0){
-                        LineSegment lineSegment = new LineSegment(currPoints[0], currPoints[2]);
-                        segments.add(lineSegment);
+            Arrays.sort(sortedPoints, p.slopeOrder());
 
+            Point firstPoint = sortedPoints[0];
+            double referenceSlope = p.slopeTo(firstPoint);
+            int countPoints = 1;
+            ArrayList<Point> tmp = new ArrayList<Point>();
+            tmp.add(p);
+            tmp.add(firstPoint);
+            for (int j = 1; j < sortedPoints.length; j++) {
+                Point q = sortedPoints[j];
+                if (p.slopeTo(q) == referenceSlope) {
+                    countPoints++;
+                    tmp.add(q);
+                }else {
+                    if (countPoints >= 3) {
+                        Collections.sort(tmp);
+                        Point min = tmp.get(0);
+                        Point max = tmp.get(tmp.size()-1);
+                        if (p.compareTo(min) == 0) {
+                            lineSegments.add(new LineSegment(min, max));
+                        }
                     }
-                }else{
-                    LineSegment lineSegment = new LineSegment(currPoints[0], currPoints[2]);
-                    segments.add(lineSegment);
+                    countPoints = 1;
+                    tmp = new ArrayList<Point>();
+                    tmp.add(p);
+                    tmp.add(q);
+                    referenceSlope = p.slopeTo(q);
                 }
             }
-
+            if (countPoints >= 3) {
+                Collections.sort(tmp);
+                Point min = tmp.get(0);
+                Point max = tmp.get(tmp.size()-1);
+                if (p.compareTo(min) == 0) {
+                    lineSegments.add(new LineSegment(min, max));
+                }
+            }
         }
 
     }
 
     // the number of line segments
     public int numberOfSegments() {
-        return segments.size();
+        return lineSegments.size();
     }
 
     // the line segments
     public LineSegment[] segments(){
-        return segments.toArray(new LineSegment[segments.size()]);
-
+        return lineSegments.toArray(new LineSegment[lineSegments.size()]);
     }
 }

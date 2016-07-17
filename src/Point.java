@@ -1,123 +1,178 @@
+/******************************************************************************
+ *  Compilation:  javac Point.java
+ *  Execution:    java Point
+ *  Dependencies: none
+ *
+ *  An immutable data type for points in the plane.
+ *  For use on Coursera, Algorithms Part I programming assignment.
+ *
+ ******************************************************************************/
+
 import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdOut;
 
 import java.util.Comparator;
 
-/**
- * Created by l071882 on 19/08/2015.
- */
 public class Point implements Comparable<Point> {
 
-    private int x,y;
+    private final int x;     // x-coordinate of this point
+    private final int y;     // y-coordinate of this point
 
-    // compare points by slope to this point
-    public final Comparator<Point> SLOPE_ORDER = new Comparator<Point>() {
+    private final Comparator<Point> SLOPE_ORDER = new Comparator<Point>() {
         @Override
-        public int compare(Point p1, Point p2) {
-            double s1 = Point.this.slopeTo(p1);
-            double s2 = Point.this.slopeTo(p2);
+        public int compare(Point o1, Point o2) {
+
+            double s1 = slopeTo(o1);
+            double s2 = slopeTo(o2);
 
             if (s1 < s2) {
                 return -1;
             }
 
             if (s1 > s2) {
-                return  1;
+                return 1;
             }
+
 
             return 0;
         }
     };
 
-    // construct the point (x, y)
-    public Point(int x, int y){
+    /**
+     * Initializes a new point.
+     *
+     * @param  x the <em>x</em>-coordinate of the point
+     * @param  y the <em>y</em>-coordinate of the point
+     */
+    public Point(int x, int y) {
+        /* DO NOT MODIFY */
         this.x = x;
         this.y = y;
     }
 
-    // draw this point
-    public void draw(){
-        StdDraw.point(x,y);
+    /**
+     * Draws this point to standard draw.
+     */
+    public void draw() {
+        /* DO NOT MODIFY */
+        StdDraw.point(x, y);
     }
 
-    // draw the line segment from this point to that point
-    public void drawTo(Point that){
+    /**
+     * Draws the line segment between this point and the specified point
+     * to standard draw.
+     *
+     * @param that the other point
+     */
+    public void drawTo(Point that) {
+        /* DO NOT MODIFY */
         StdDraw.line(this.x, this.y, that.x, that.y);
     }
 
-    // string representation
-    public String toString(){
-        return "(" + x + ", " + y + ")";
-    }
-
-    // is this point lexicographically smaller than that point?
-    public int compareTo(Point that){
-
-        if (this.y < that.y) {
-            return -1;
+    /**
+     * Returns the slope between this point and the specified point.
+     * Formally, if the two points are (x0, y0) and (x1, y1), then the slope
+     * is (y1 - y0) / (x1 - x0). For completeness, the slope is defined to be
+     * +0.0 if the line segment connecting the two points is horizontal;
+     * Double.POSITIVE_INFINITY if the line segment is vertical;
+     * and Double.NEGATIVE_INFINITY if (x0, y0) and (x1, y1) are equal.
+     *
+     * @param  that the other point
+     * @return the slope between this point and the specified point
+     */
+    public double slopeTo(Point that) {
+        /* YOUR CODE HERE */
+        if (that == null) {
+            throw new NullPointerException();
         }
 
-        if (this.y > that.y) {
-            return 1;
-        }
+        int yDiff = that.y - y;
+        int xDiff = that.x - x;
 
-        if (this.x < that.x) {
-            return -1;
-        }
+        double slope = (double) yDiff / xDiff;
 
-        if (this.x > that.x) {
-            return 1;
-        }
-
-        return 0 ;
-    }
-
-    // the slope between this point and that point
-    public double slopeTo(Point that){
-
-        int ydiff = that.y - this.y;
-        int xdiff = that.x - this.x;
-
-        // degenerate line - negative infinity
-        if (this.x == that.x && this.y == that.y) {
+        if (x == that.x && y == that.y){
             return Double.NEGATIVE_INFINITY;
         }
 
-        // horizontal line , positive zero
-        if (ydiff == 0) {
-            return 0.0;
+        // horizontal
+        if (yDiff == 0.0d) {
+            return +0.0d;
         }
 
-        // vertical line , positive infinity
-        if (xdiff == 0) {
+        // vertical
+        if (xDiff == 0.0d) {
             return Double.POSITIVE_INFINITY;
         }
 
-        final double slope = (double)ydiff / xdiff;
-
         return slope;
+
     }
 
-    // unit test
+    /**
+     * Compares two points by y-coordinate, breaking ties by x-coordinate.
+     * Formally, the invoking point (x0, y0) is less than the argument point
+     * (x1, y1) if and only if either y0 < y1 or if y0 = y1 and x0 < x1.
+     *
+     * @param  that the other point
+     * @return the value <tt>0</tt> if this point is equal to the argument
+     *         point (x0 = x1 and y0 = y1);
+     *         a negative integer if this point is less than the argument
+     *         point; and a positive integer if this point is greater than the
+     *         argument point
+     */
+    public int compareTo(Point that) {
+        /* YOUR CODE HERE */
+        if (that == null) {
+            throw new NullPointerException();
+        }
+
+        if (y < that.y) {
+            return -1;
+        }
+
+        if (y > that.y) {
+            return 1;
+        }
+
+        if (x < that.x) {
+            return -1;
+        }
+
+        if (x > that.x) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Compares two points by the slope they make with this point.
+     * The slope is defined as in the slopeTo() method.
+     *
+     * @return the Comparator that defines this ordering on points
+     */
+    public Comparator<Point> slopeOrder() {
+        /* YOUR CODE HERE */
+        return SLOPE_ORDER;
+    }
+
+
+    /**
+     * Returns a string representation of this point.
+     * This method is provide for debugging;
+     * your program should not rely on the format of the string representation.
+     *
+     * @return a string representation of this point
+     */
+    public String toString() {
+        /* DO NOT MODIFY */
+        return "(" + x + ", " + y + ")";
+    }
+
+    /**
+     * Unit tests the Point data type.
+     */
     public static void main(String[] args) {
         /* YOUR CODE HERE */
-        Point p0 = new Point(0,0);
-        Point p1 = new Point(1,1);
-        Point p2 = new Point(2,2);
-        Point p3 = new Point(4,2);
-        Point p4 = new Point(2,4);
-
-
-        int c1 = p0.SLOPE_ORDER.compare(p1, p2);
-        int c2 = p0.SLOPE_ORDER.compare(p2, p3);
-        int c3 = p0.SLOPE_ORDER.compare(p3, p4);
-
-
-        StdOut.println(c1);
-        StdOut.println(c2);
-        StdOut.println(c3);
-
-        StdOut.println(p0.slopeTo(p1));
     }
-
 }
