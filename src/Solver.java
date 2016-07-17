@@ -19,11 +19,11 @@ public class Solver {
         Board board;
         int priority;
 
-        SearchNode(int noMoves, SearchNode previousNode, Board current, int priority) {
+        SearchNode(int noMoves, SearchNode previousNode, Board current) {
             this.noMoves = noMoves;
             this.previousNode = previousNode;
             this.board = current;
-            this.priority = priority;
+            this.priority = noMoves + current.manhattan();
         }
 
         @Override
@@ -45,32 +45,28 @@ public class Solver {
         if (initial == null) {
             throw new NullPointerException();
         }
-
-        SearchNode root = new SearchNode(noMoves, null, initial, initial.manhattan()+noMoves);
+        noMoves = 0;
+        SearchNode root = new SearchNode(noMoves, null, initial);
         queue.insert(root);
         camefrom = new Stack<Board>();
         camefrom.push(initial);
 
         while (!queue.isEmpty()) {
+
             SearchNode currentNode = queue.delMin();
             Board currentBoard = currentNode.board;
             if (currentBoard.isGoal()) {
                 isSolveable = true;
                 break;
             }
-            int tmpCost = Integer.MAX_VALUE;
+
             for(Board neighbour : currentBoard.neighbors()) {
                 SearchNode previousNode = currentNode.previousNode;
                 if (!neighbour.equals(previousNode.board)) {
-                    int newCost = neighbour.manhattan() + (noMoves+1);
-                    if (newCost < tmpCost) {
-                        tmpCost = newCost;
-                    }
+                    SearchNode neighbourNode = new SearchNode(noMoves, currentNode, neighbour);
+                    queue.insert(neighbourNode);
+                    camefrom.push(currentBoard);
                 }
-
-                SearchNode neighbourNode = new SearchNode(noMoves++, currentNode, neighbour, tmpCost);
-                queue.insert(neighbourNode);
-                camefrom.push(neighbour);
             }
         }
     }
@@ -116,9 +112,5 @@ public class Solver {
             for (Board board : solver.solution())
                 StdOut.println(board);
         }
-
-
-
-
     }
 }
