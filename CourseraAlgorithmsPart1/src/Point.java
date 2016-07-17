@@ -37,7 +37,7 @@ public class Point implements Comparable<Point> {
 
     // draw this point
     public void draw(){
-        StdDraw.point(x,y);
+        StdDraw.point(x, y);
     }
 
     // draw the line segment from this point to that point
@@ -120,4 +120,7 @@ public class Point implements Comparable<Point> {
         StdOut.println(p0.slopeTo(p1));
     }
 
+    public Comparator<Point> slopeOrder() {
+        return SLOPE_ORDER;
+    }
 }
