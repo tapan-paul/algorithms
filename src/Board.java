@@ -110,9 +110,15 @@ public class Board {
 
         int ij_value = board[i][j];
         int xy_value = board[x][y];
-        board[i][j] = xy_value;
-        board[x][y]= ij_value;
-        return new Board(board);
+        int[][] copy = new int[N][N];
+        for (int k = 0; k < board.length; k++) {
+            for (int l = 0; l < board.length; l++) {
+                copy[k][l] = board[k][l];
+            }
+        }
+        copy[i][j] = xy_value;
+        copy[x][y]= ij_value;
+        return new Board(copy);
     }
 
     // all neighboring boards
@@ -139,10 +145,10 @@ public class Board {
         if (j_pos-1 >= 0) {
             stack.push(swap(tiles, i_pos, j_pos, i_pos, j_pos-1));
         }
-        if (i_pos+1 >= N){
+        if (i_pos+1 < N){
             stack.push(swap(tiles, i_pos, j_pos, i_pos+1, j_pos));
         }
-        if (j_pos+1 >= N) {
+        if (j_pos+1 < N) {
             stack.push(swap(tiles, i_pos, j_pos, i_pos, j_pos+1));
         }
 
@@ -172,13 +178,12 @@ public class Board {
         int[][] block4 = {{1,2,3},{4,5,6},{7,8,0}};
         int[][] block5 = {{8,1,3},{4,0,2},{7,6,5}};
         int[][] block6 = {{1,0,3},{4,2,5},{7,8,6}};
-        Board test = new Board(block6);
-        StdOut.println(test.manhattan());
-        test.isGoal();
-        for (int i = 0; i < test.goal.length; i++) {
-            for (int j = 0; j < test.goal.length; j++) {
-                StdOut.print(test.goal[i][j]);
-            }
+        Board board = new Board(block6);
+
+        StdOut.print(board);
+        Iterable<Board> neighbours = board.neighbors();
+        for (Board neighbour : neighbours) {
+            StdOut.print(neighbour);
         }
     }
 }
