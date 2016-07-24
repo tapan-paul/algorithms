@@ -89,9 +89,9 @@ public class Board {
     // a board that is obtained by exchanging any pair of tiles
     public Board twin(){
 
-        for (int i = 0; i < tiles.length; i++) {
-            for (int j = 0; j < tiles.length; j++) {
-                if (tiles[i][j] != 0 && i+1<tiles.length && j+1<tiles.length && tiles[i+1][j+1] != 0) {
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (tiles[i][j] != 0 && i+1<N && j+1<N && tiles[i+1][j+1] != 0) {
                     return swap(tiles, i, j, i+1, j+1);
                 }
             }
