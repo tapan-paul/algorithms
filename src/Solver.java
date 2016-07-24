@@ -9,9 +9,10 @@ import edu.princeton.cs.algs4.StdOut;
 public class Solver {
 
     private MinPQ<SearchNode> queue = new MinPQ<SearchNode>();
+    private MinPQ<SearchNode> twinQueue = new MinPQ<>();
     private boolean isSolveable = false;
     private int noMoves = 0;
-    private Stack<Board> camefrom;
+    private SearchNode last;
 
     private class SearchNode implements Comparable<SearchNode>{
         int noMoves;
@@ -45,28 +46,49 @@ public class Solver {
         if (initial == null) {
             throw new NullPointerException();
         }
+
         noMoves = 0;
         SearchNode root = new SearchNode(noMoves, null, initial);
         SearchNode twin = new SearchNode(noMoves, null, initial.twin());
         queue.insert(root);
-        camefrom = new Stack<Board>();
+        twinQueue.insert(twin);
 
         while (!queue.isEmpty()) {
 
             SearchNode currentNode = queue.delMin();
+            SearchNode twinCurrentNode = queue.delMin();
+
             Board currentBoard = currentNode.board;
+            Board twinCurrentBoard = twinCurrentNode.board;
+
             if (currentBoard.isGoal()) {
+                last = currentNode;
                 isSolveable = true;
                 break;
             }
 
-            for(Board neighbour : currentBoard.neighbors()) {
-                SearchNode previousNode = currentNode.previousNode;
-                if (!neighbour.equals(previousNode.board)) {
-                    SearchNode neighbourNode = new SearchNode(noMoves, currentNode, neighbour);
-                    queue.insert(neighbourNode);
-                    camefrom.push(currentBoard);
-                }
+            if (twinCurrentBoard.isGoal()) {
+                isSolveable = false;
+                noMoves = -1;
+                break;
+            }
+
+            enqueueNode(currentNode, queue);
+            enqueueNode(twinCurrentNode, twinQueue);
+        }
+    }
+
+    private void enqueueNode(SearchNode currentNode, MinPQ<SearchNode> queue) {
+
+        Board currentBoard = currentNode.board;
+
+        for(Board neighbour : currentBoard.neighbors()) {
+
+            SearchNode previousNode = currentNode.previousNode;
+
+            if (!neighbour.equals(previousNode.board)) {
+                SearchNode neighbourNode = new SearchNode(++noMoves, currentNode, neighbour);
+                queue.insert(neighbourNode);
             }
         }
     }
@@ -86,6 +108,15 @@ public class Solver {
 
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution(){
+
+        if (!isSolvable()) {
+            return null;
+        }
+        Stack<Board> camefrom = new Stack<>();
+        while (last != null) {
+            camefrom.push(last.board);
+            last = last.previousNode;
+        }
         return camefrom;
     }
 
