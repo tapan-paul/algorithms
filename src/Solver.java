@@ -77,12 +77,12 @@ public class Solver {
                 break;
             }
 
-            enqueueNode(currentNode, queue, ++noMoves);
-            enqueueNode(twinCurrentNode, twinQueue, ++twinNoMoves);
+            addNeighbours(currentNode, queue, ++noMoves);
+            addNeighbours(twinCurrentNode, twinQueue, ++twinNoMoves);
         }
     }
 
-    private void enqueueNode(SearchNode currentNode, MinPQ<SearchNode> queue, int noMoves) {
+    private void addNeighbours(SearchNode currentNode, MinPQ<SearchNode> queue, int noMoves) {
 
         Board currentBoard = currentNode.board;
         SearchNode previousNode = currentNode.previousNode;
