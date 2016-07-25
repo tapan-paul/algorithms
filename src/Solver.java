@@ -14,7 +14,7 @@ public class Solver {
     private boolean isSolveable = false;
     private int noMoves = 0;
     private int twinNoMoves = 0;
-    private SearchNode last;
+    private SearchNode goalBoard;
 
     private class SearchNode implements Comparable<SearchNode>{
         int noMoves;
@@ -65,9 +65,9 @@ public class Solver {
             Board twinCurrentBoard = twinCurrentNode.board;
 
             if (currentBoard.isGoal()) {
-                last = currentNode;
+                goalBoard = currentNode;
                 isSolveable = true;
-                noMoves = last.noMoves;
+                noMoves = goalBoard.noMoves;
                 break;
             }
 
@@ -116,9 +116,9 @@ public class Solver {
             return null;
         }
         Stack<Board> camefrom = new Stack<Board>();
-        while (last != null) {
-            camefrom.push(last.board);
-            last = last.previousNode;
+        while (goalBoard != null) {
+            camefrom.push(goalBoard.board);
+            goalBoard = goalBoard.previousNode;
         }
         return camefrom;
     }
