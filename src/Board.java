@@ -91,8 +91,8 @@ public class Board {
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                if (tiles[i][j] != 0 && i+1<N && j+1<N && tiles[i+1][j+1] != 0) {
-                    return swap(tiles, i, j, i+1, j+1);
+                if (tiles[i][j] != 0 && j+1<N && tiles[i][j+1] != 0) {
+                    return swap(tiles, i, j, i, j+1);
                 }
             }
         }
@@ -193,5 +193,9 @@ public class Board {
         for (Board neighbour : neighbours) {
             StdOut.print(neighbour);
         }
+    }
+
+    public int tileAt(int row, int col) {
+        return tiles[row][col];
     }
 }
