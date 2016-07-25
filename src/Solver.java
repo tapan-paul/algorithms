@@ -67,6 +67,7 @@ public class Solver {
             if (currentBoard.isGoal()) {
                 last = currentNode;
                 isSolveable = true;
+                noMoves = last.noMoves;
                 break;
             }
 
