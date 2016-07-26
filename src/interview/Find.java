@@ -1,6 +1,7 @@
 package interview;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,8 +25,10 @@ public class Find {
         l1.add(3);
 
         List<Integer> l2 = new ArrayList<>();
-        l2.add(3);
+        l2.add(1);
+        l2.add(2);
 
+        System.out.println(Collections.indexOfSubList(l1, l2));
         System.out.println(find(l1,l2));
     }
 
@@ -36,14 +39,17 @@ public class Find {
         for (int i = 0; i < l1.size(); i++) {
             Integer i1 = l1.get(i);
             if (i1.equals(l2_first)) {
-                int k =1;
-                for (int j = i+1; j < l1.size() && k < l2.size(); j++) {
+                int k =1;int j;
+                for ( j= i+1; j < l1.size() && k < l2.size(); j++) {
                     if (!l1.get(j).equals(l2.get(k))) {
                         return -1;
                     }
                     k++;
                 }
-                return i;
+                if (k==l2.size()) {
+                    return i;
+                }
+                return -1;
             }
 
         }
