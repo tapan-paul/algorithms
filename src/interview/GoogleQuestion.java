@@ -14,10 +14,10 @@ public class GoogleQuestion {
         //System.out.println(val);
 
         val = rotate2("xyz", "cde");
-        System.out.println(val);
+        //System.out.println(val);
 
         val = rotate("def", "abc");
-      //  System.out.println(val);
+       System.out.println(val);
 
         val = rotate2("efg", "abc");
        // System.out.println(val);
@@ -37,18 +37,23 @@ public class GoogleQuestion {
         char c2 = s2.charAt(0);
 
         int diff = c2 - c1;
-        if (diff < -1) {
+        if (diff < 0) {
             diff += 26;
         }
 
         char[] chars1 = s1.toCharArray();
-        char[] chars2 = s2.toCharArray();
         for (int i = 1; i < chars1.length; i++) {
             c1 = s1.charAt(i);
             c2 = s2.charAt(i);
 
-            if (c1 + diff != c2) {
-                return -1;
+            if (diff + c1 > 'z') {
+                if ( ((diff - ('z' - c1)) + 'a') - 1 != c2) {
+                    return -1;
+                }
+            }else {
+                if (c1 + diff != c2) {
+                    return -1;
+                }
             }
         }
 
