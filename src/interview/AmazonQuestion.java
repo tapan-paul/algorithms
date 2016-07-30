@@ -11,11 +11,12 @@ public class AmazonQuestion {
 
         int arr[] = {-2, 1, -3, 4, -1, 2, 1, -5, 4, -1 , 10, -4, -6 ,-6};
         int arr2[] = {-2, -3, -4};
+        int arr3[] = {3, 3, 3, -7, 20};
 
-        int maxSum = maxSubArray3(arr2);
+        int maxSum = maxSubArray3(arr3);
         StdOut.println(maxSum);
 
-        maxSum = maxSubArray2(arr2);
+        maxSum = maxSubArray2(arr3);
         StdOut.print(maxSum);
 
     }
@@ -45,8 +46,8 @@ public class AmazonQuestion {
             }else {
                 sum = arr[i];
             }
-            if (sum > maxSoFar) {
-                maxSoFar = sum;
+            if (sum>maxSoFar) {
+                maxSoFar =sum;
             }
 
         }
