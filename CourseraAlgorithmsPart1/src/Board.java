@@ -4,7 +4,7 @@ import edu.princeton.cs.algs4.StdOut;
 import java.util.Arrays;
 
 /**
- * Created by l071882 on 29/04/2016.
+ * @tapan .
  */
 public class Board {
 
@@ -17,7 +17,12 @@ public class Board {
         if (tiles ==null){
             throw new NullPointerException();
         }
-        this.tiles = tiles;
+        this.tiles = new int[tiles.length][tiles.length];
+        for (int i = 0; i < tiles.length; i++) {
+            for (int j = 0; j < tiles.length; j++) {
+                this.tiles[i][j] = tiles[i][j];
+            }
+        }
         N = tiles.length;
         this.goal = new int[N][N];
     }
@@ -25,7 +30,7 @@ public class Board {
     // (where tiles[i][j] = block in row i, column j)
     // board dimension N
     public int dimension(){
-        return tiles.length;
+        return N;
     }
 
     // number of tiles out of place
@@ -89,7 +94,15 @@ public class Board {
     // a board that is obtained by exchanging any pair of tiles
     public Board twin(){
 
-        return null;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (tiles[i][j] != 0 && j+1<N && tiles[i][j+1] != 0) {
+                    return swap(tiles, i, j, i, j+1);
+                }
+            }
+        }
+
+        return new Board(tiles);
     }
 
     // does this board equal y?
@@ -110,9 +123,15 @@ public class Board {
 
         int ij_value = board[i][j];
         int xy_value = board[x][y];
-        board[i][j] = xy_value;
-        board[x][y]= ij_value;
-        return new Board(board);
+        int[][] copy = new int[N][N];
+        for (int k = 0; k < board.length; k++) {
+            for (int l = 0; l < board.length; l++) {
+                copy[k][l] = board[k][l];
+            }
+        }
+        copy[i][j] = xy_value;
+        copy[x][y]= ij_value;
+        return new Board(copy);
     }
 
     // all neighboring boards
@@ -139,10 +158,10 @@ public class Board {
         if (j_pos-1 >= 0) {
             stack.push(swap(tiles, i_pos, j_pos, i_pos, j_pos-1));
         }
-        if (i_pos+1 >= N){
+        if (i_pos+1 < N){
             stack.push(swap(tiles, i_pos, j_pos, i_pos+1, j_pos));
         }
-        if (j_pos+1 >= N) {
+        if (j_pos+1 < N) {
             stack.push(swap(tiles, i_pos, j_pos, i_pos, j_pos+1));
         }
 
@@ -172,33 +191,12 @@ public class Board {
         int[][] block4 = {{1,2,3},{4,5,6},{7,8,0}};
         int[][] block5 = {{8,1,3},{4,0,2},{7,6,5}};
         int[][] block6 = {{1,0,3},{4,2,5},{7,8,6}};
-        Board test = new Board(block6);
-        StdOut.println(test.manhattan());
-        test.isGoal();
-        for (int i = 0; i < test.goal.length; i++) {
-            for (int j = 0; j < test.goal.length; j++) {
-                StdOut.print(test.goal[i][j]);
-            }
+        Board board = new Board(block6);
+
+        StdOut.print(board);
+        Iterable<Board> neighbours = board.neighbors();
+        for (Board neighbour : neighbours) {
+            StdOut.print(neighbour);
         }
-        // create initial board from file
-/*        In in = new In(args[0]);
-        int N = in.readInt();
-        int[][] tiles = new int[N][N];
-        for (int i = 0; i < N; i++)
-            for (int j = 0; j < N; j++)
-                tiles[i][j] = in.readInt();
-        Board initial = new Board(tiles);
-
-        // solve the puzzle
-        Solver solver = new Solver(initial);
-
-        // print solution to standard output
-        if (!solver.isSolvable())
-            StdOut.println("No solution possible");
-        else {
-            StdOut.println("Minimum number of moves = " + solver.moves());
-            for (Board board : solver.solution())
-                StdOut.println(board);
-        }*/
     }
 }

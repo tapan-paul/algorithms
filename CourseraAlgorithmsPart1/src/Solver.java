@@ -4,14 +4,16 @@ import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 
 /**
- * Created by l071882 on 6/05/2016.
+ * @tapan .
  */
 public class Solver {
 
     private MinPQ<SearchNode> queue = new MinPQ<SearchNode>();
+    private MinPQ<SearchNode> twinQueue = new MinPQ<SearchNode>();
     private boolean isSolveable = false;
     private int noMoves = 0;
-    private Stack<Board> camefrom;
+    private int twinNoMoves = 0;
+    private SearchNode goalBoard;
 
     private class SearchNode implements Comparable<SearchNode>{
         int noMoves;
@@ -19,11 +21,11 @@ public class Solver {
         Board board;
         int priority;
 
-        SearchNode(int noMoves, SearchNode previousNode, Board current, int priority) {
+        SearchNode(int noMoves, SearchNode previousNode, Board current) {
             this.noMoves = noMoves;
             this.previousNode = previousNode;
             this.board = current;
-            this.priority = priority;
+            this.priority = noMoves + current.manhattan();
         }
 
         @Override
@@ -46,32 +48,49 @@ public class Solver {
             throw new NullPointerException();
         }
 
-        SearchNode root = new SearchNode(noMoves, null, initial, initial.manhattan()+noMoves);
+        noMoves = 0;
+        twinNoMoves = 0;
+        SearchNode root = new SearchNode(noMoves, null, initial);
+        SearchNode twin = new SearchNode(twinNoMoves, null, initial.twin());
         queue.insert(root);
-        camefrom = new Stack<Board>();
-        camefrom.push(initial);
+        twinQueue.insert(twin);
 
         while (!queue.isEmpty()) {
+
             SearchNode currentNode = queue.delMin();
+            SearchNode twinCurrentNode = twinQueue.delMin();
+
             Board currentBoard = currentNode.board;
+            Board twinCurrentBoard = twinCurrentNode.board;
+
             if (currentBoard.isGoal()) {
+                goalBoard = currentNode;
                 isSolveable = true;
+                noMoves = goalBoard.noMoves;
                 break;
             }
-            int tmpCost = Integer.MAX_VALUE;
-            for(Board neighbour : currentBoard.neighbors()) {
-                SearchNode previousNode = currentNode.previousNode;
-                if (!neighbour.equals(previousNode.board)) {
-                    int newCost = neighbour.manhattan() + (noMoves+1);
-                    if (newCost < tmpCost) {
-                        tmpCost = newCost;
-                    }
-                    continue;
 
-                }
-                SearchNode neighbourNode = new SearchNode(noMoves++, currentNode, neighbour, tmpCost);
+            if (twinCurrentBoard.isGoal()) {
+                isSolveable = false;
+                noMoves = -1;
+                break;
+            }
+
+            addNeighbours(currentNode, queue);
+            addNeighbours(twinCurrentNode, twinQueue);
+        }
+    }
+
+    private void addNeighbours(SearchNode currentNode, MinPQ<SearchNode> queue) {
+
+        Board currentBoard = currentNode.board;
+        SearchNode previousNode = currentNode.previousNode;
+
+        for(Board neighbour : currentBoard.neighbors()) {
+
+            if (previousNode ==null || !neighbour.equals(previousNode.board)) {
+                SearchNode neighbourNode = new SearchNode(currentNode.noMoves+1, currentNode, neighbour);
                 queue.insert(neighbourNode);
-                camefrom.push(neighbour);
             }
         }
     }
@@ -91,6 +110,15 @@ public class Solver {
 
     // sequence of boards in a shortest solution; null if unsolvable
     public Iterable<Board> solution(){
+
+        if (!isSolvable()) {
+            return null;
+        }
+        Stack<Board> camefrom = new Stack<Board>();
+        while (goalBoard != null) {
+            camefrom.push(goalBoard.board);
+            goalBoard = goalBoard.previousNode;
+        }
         return camefrom;
     }
 
@@ -117,9 +145,5 @@ public class Solver {
             for (Board board : solver.solution())
                 StdOut.println(board);
         }
-
-
-
-
     }
 }
